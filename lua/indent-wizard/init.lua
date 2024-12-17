@@ -72,6 +72,17 @@ function M.setup(opts)
     end
   end
 
+  local function ft_set_indent()
+    local defaults = M.default_indent()
+    if defaults then
+      M.set_indent {
+        global = false,
+        options = defaults,
+      }
+    end
+  end
+
+  local group_ft = vim.api.nvim_create_augroup("indent-wizard-set-indent-by-ft", { clear = true })
   if opts.auto_guess == nil or opts.auto_guess then
     local group = vim.api.nvim_create_augroup("indent-wizard-auto-guess", { clear = true })
 
@@ -86,22 +97,18 @@ function M.setup(opts)
       end,
     })
   else
-    local group = vim.api.nvim_create_augroup("indent-wizard-set-indent-by-ft", { clear = true })
-
     vim.api.nvim_create_autocmd("BufReadPost", {
-      group = group,
+      group = group_ft,
       desc = "indent-wizard.nvim: Set indentation for buffers by filetypes",
-      callback = function ()
-        local defaults = M.default_indent()
-        if defaults then
-          M.set_indent {
-            global = false,
-            options = defaults,
-          }
-        end
-      end,
+      callback = ft_set_indent,
     })
   end
+
+  vim.api.nvim_create_autocmd("BufNewFile", {
+    group = group_ft,
+    desc = "indent-wizard.nvim: Set indentation for new file buffers",
+    callback = ft_set_indent,
+  })
 end
 
 --- Get default indentation
