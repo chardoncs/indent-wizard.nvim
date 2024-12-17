@@ -13,11 +13,11 @@ local M = {}
 ---@param opts {auto_guess:boolean|nil, defaults:{ft:string|string[]|nil, options:Settings}[], scan:{line_count:uinteger|nil, offset:uinteger|nil}}|nil: Configuration opts
 function M.setup(opts)
   local function indent_info()
-    local result = M.indent_info()
+    local result = M.indent_info(opts and opts.scan)
     vim.print(
       string.format(
         "Apparently: shiftwidth=%s, expandtab=%s",
-        result.shiftwidth < 0 and "?" or tostring(result.shiftwidth),
+        result.shiftwidth == nil and "?" or tostring(result.shiftwidth),
         result.expandtab == nil and "?" or result.expandtab and "yes" or "no"
       )
     )
@@ -35,9 +35,10 @@ function M.setup(opts)
   vim.api.nvim_create_user_command(
     "GuessIndent",
     function ()
-        M.set_indent({
-          scan = indent_info(),
-        })
+        M.set_indent {
+          global = false,
+          options = indent_info(),
+        }
     end,
     {
       desc = "indent-wizard.nvim: Guess indentation for current buffer",
@@ -54,7 +55,7 @@ function M.setup(opts)
         if item.options then
           M.set_indent {
             global = true,
-            unpack(item.options),
+            options = item.options,
           }
         end
 
@@ -64,10 +65,7 @@ function M.setup(opts)
 
         for _, ft in ipairs(fts) do
           if type(ft) == "string" then
-            table.insert(ft_defaults, {
-              ft = ft,
-              options = item.options,
-            })
+            ft_defaults[ft] = item.options
           end
         end
       end
@@ -96,7 +94,10 @@ function M.setup(opts)
       callback = function ()
         local defaults = M.default_indent()
         if defaults then
-          M.set_indent(defaults)
+          M.set_indent {
+            global = false,
+            options = defaults,
+          }
         end
       end,
     })
@@ -120,9 +121,9 @@ end
 function M.indent_info(opts)
   opts = opts or {}
 
-  local line_count = type(opts.line_count) == "number" and math.max(math.floor(opts.line_count), 1) or 20
+  local line_count = type(opts.line_count) == "number" and math.max(math.floor(opts.line_count), 1) or 60
   --- @type number
-  local offset = 0.1
+  local offset = 0
   if type(opts.offset) == "number" then
     if opts.offset < 1 then
       --[[@as number]]
@@ -138,7 +139,7 @@ function M.indent_info(opts)
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local length = vim.fn.len(lines)
 
-  local min_shiftwidth = -1
+  local min_shiftwidth = nil
   local expand_tab_vote = 0
 
   local abs_offset = offset < 1 and math.floor(length * offset) or offset
@@ -168,7 +169,7 @@ function M.indent_info(opts)
     end
 
     if space_len % 2 == 0 then
-      if min_shiftwidth < 0 or min_shiftwidth > space_len then
+      if min_shiftwidth == nil or min_shiftwidth > space_len then
         min_shiftwidth = space_len
       end
     end
@@ -231,6 +232,10 @@ function M.guess_indent(opts)
       options = fallback,
     })
   end
+end
+
+function M.get_defaults()
+  vim.print(vim.inspect(ft_defaults))
 end
 
 return M
