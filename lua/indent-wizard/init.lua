@@ -2,11 +2,11 @@
 
 --- @alias Settings {tabstop:uinteger|nil, softtabstop:uinteger|nil, shiftwidth:uinteger|nil, expandtab: boolean|nil, smartindent: boolean|nil}
 
----@type table<string, Settings>
-local ft_defaults = {}
-
 --- @module "indent-wizard"
-local M = {}
+local M = {
+  ---@type table<string, Settings>
+  ft_defaults = {},
+}
 
 --- Setup function
 ---
@@ -65,7 +65,7 @@ function M.setup(opts)
 
         for _, ft in ipairs(fts) do
           if type(ft) == "string" then
-            ft_defaults[ft] = item.options
+            M.ft_defaults[ft] = item.options
           end
         end
       end
@@ -109,7 +109,7 @@ end
 --- @param ft string|nil File type (use file type from current buffer if empty)
 --- @return Settings|nil 
 function M.default_indent(ft)
-  return ft_defaults[ft or vim.bo.filetype]
+  return M.ft_defaults[ft or vim.bo.filetype]
 end
 
 --- @alias ScanSettings {line_count:uinteger|nil, offset:number|string|nil}
@@ -154,29 +154,21 @@ function M.indent_info(opts)
     local line = lines[i]
     local str_len = vim.fn.len(line)
 
-    if str_len < 1 then
-      break
-    end
-
-    if line:sub(1, 1) == "\t" then
+    if str_len > 0 and line:sub(1, 1) == "\t" then
       expand_tab_vote = expand_tab_vote - 1
-      break
-    end
+    else
+      local space_len = vim.fn.len(tostring(line:match("^%s+")))
+      if space_len > 0 then
+        if space_len % 2 == 0 then
+          if min_shiftwidth == nil or min_shiftwidth > space_len then
+            min_shiftwidth = space_len
+          end
+        end
+        expand_tab_vote = expand_tab_vote + 1
 
-    local space_len = vim.fn.len(tostring(line:match("%s+")))
-    if space_len < 1 then
-      goto continue
-    end
-
-    if space_len % 2 == 0 then
-      if min_shiftwidth == nil or min_shiftwidth > space_len then
-        min_shiftwidth = space_len
+        i = i + 1
       end
     end
-    expand_tab_vote = expand_tab_vote + 1
-
-    i = i + 1
-    ::continue::
     abs_i = abs_i + 1
   end
 
@@ -232,10 +224,6 @@ function M.guess_indent(opts)
       options = fallback,
     })
   end
-end
-
-function M.get_defaults()
-  vim.print(vim.inspect(ft_defaults))
 end
 
 return M
