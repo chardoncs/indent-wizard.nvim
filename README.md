@@ -7,7 +7,7 @@ Simple indentation configuration and guessing plugin for Neovim
 ### Manual
 
 ```lua
-require("indent-wizard").setup()
+require("indent-wizard").setup {}
 ```
 
 ### [lazy.nvim](https://github.com/folke/lazy.nvim)
@@ -19,9 +19,11 @@ require("indent-wizard").setup()
 }
 ```
 
-## Configuration
+## Usage
 
-### Default configuration
+### Configuration
+
+#### Default configuration
 
 This snippet is about default config. You don't need to copypasta it.
 
@@ -47,7 +49,7 @@ require("indent-wizard").setup {
 }
 ```
 
-### Fallback indentations
+#### Fallback indentations
 
 Here is how fallback settings (`defaults`) looks like:
 
@@ -84,3 +86,14 @@ require("indent-wizard").setup {
   },
 }
 ```
+
+### Commands
+
+- `IndentInfo`: Guess the indentation and print the summary
+  - Output: `Apparently: shiftwidth=<sw>, expandtab=<et>`
+    - `<sw>`: Number for shiftwidth, or `?` for inconclusive
+    - `<et>`: If expands tab, `yes`, `no`, or `?` (inconclusive)
+- `GuessIndent`: Guess the indentation and update the configuration
+  - Output: `Apparently: shiftwidth=<sw>, expandtab=<et>`
+    - `<sw>`: Number for shiftwidth, or `?` for inconclusive
+    - `<et>`: If expands tab, `yes`, `no`, or `?` (inconclusive)
