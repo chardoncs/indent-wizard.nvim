@@ -77,7 +77,7 @@ require("indent-wizard").setup {
     },
     {
       -- Or multiple filetypes
-      ft = ["c", "cpp", "rust", "zig"],
+      ft = {"c", "cpp", "rust", "zig"},
       options = {
         shiftwidth = 4,
         expandtab = false,
