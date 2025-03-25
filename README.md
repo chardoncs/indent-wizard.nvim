@@ -35,7 +35,7 @@ require("indent-wizard").setup {
     -- How many lines of sample in a file should be used for indentation guessing.
     --
     -- NOTE: 0-indented lines are ignored.
-    line_count = 60,
+    line_count = 25,
     -- How many lines should be skipped.
     --
     -- If the number is between 0~1, indent-wizard will regard it
