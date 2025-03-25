@@ -126,7 +126,7 @@ end
 function M.indent_info(opts)
   opts = opts or {}
 
-  local line_count = type(opts.line_count) == "number" and math.max(math.floor(opts.line_count), 1) or 60
+  local line_count = type(opts.line_count) == "number" and math.max(math.floor(opts.line_count), 1) or 25
   --- @type number
   local offset = 0
   if type(opts.offset) == "number" then
