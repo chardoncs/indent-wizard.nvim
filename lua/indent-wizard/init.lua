@@ -1,5 +1,3 @@
-#!/usr/bin/env luajit
-
 --- @alias Settings {tabstop:uinteger|nil, softtabstop:uinteger|nil, shiftwidth:uinteger|nil, expandtab: boolean|nil, smartindent: boolean|nil}
 
 --- @module "indent-wizard"
