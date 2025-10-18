@@ -1,7 +1,7 @@
 #!/usr/bin/env -S nvim -l
 
-require("./guesswork.lua")
-require("./utils.lua")
+require("indent-wizard.guesswork")
+require("indent-wizard.utils")
 
 local default_line_count = 25
 
