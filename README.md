@@ -7,6 +7,8 @@ Simple indentation configuration and guessing plugin for Neovim
 ### Manual
 
 ```lua
+package.path = "/path/to/the/plugin;" .. package.path
+
 require("indent-wizard").setup {}
 ```
 
