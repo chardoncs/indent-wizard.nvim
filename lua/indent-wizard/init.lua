@@ -12,7 +12,7 @@ local default_line_count = 25
 ---  softtabstop:uinteger|nil,
 ---  shiftwidth:uinteger|nil,
 ---  expandtab: boolean|nil,
----  smartindent: boolean|nil, --- NOTE: `true` by default
+---  smartindent: boolean|nil,
 ---  spaces:uinteger|nil, --- Shorthand for setting `shiftwidth`, `tabstop`, and `softtabstop` at the same time as fallback
 ---}
 
@@ -20,6 +20,8 @@ local default_line_count = 25
 local M = {
   ---@type table<string, Settings>
   ft_defaults = {},
+  ---@type ScanSettings|nil
+  scan_settings = nil,
 }
 
 --- Setup function
@@ -57,12 +59,9 @@ function M.setup(opts)
   vim.api.nvim_create_user_command(
     "GuessIndent",
     function ()
-      local result = indent_info()
-
-      M.set_indent {
-        global = false,
-        options = {
-        },
+      M.apply_guess {
+        scan = M.scan_settings,
+        fallback = M.default_indent(),
       }
     end,
     {
@@ -74,19 +73,22 @@ function M.setup(opts)
     return
   end
 
+  -- Save the settings for later use
+  M.scan_settings = opts.scan
+
   if opts.defaults then
     for _, item in ipairs(opts.defaults) do
       if not item.ft then
+        -- Apply global settings immediately
         if item.options then
           M.set_indent {
             global = true,
             options = item.options,
           }
         end
-
       else
-        --[=[@as (string|nil)[]]=]
-        local fts = type(item.ft) == "table" and item.ft or { item.ft }
+        -- Save local settings
+        local fts = (type(item.ft) == "table" and item.ft or { item.ft }) --[=[@as (string|nil)[]]=]
 
         for _, ft in ipairs(fts) do
           if type(ft) == "string" then
@@ -206,16 +208,16 @@ function M.apply_guess(opts)
   local fallback = opts and opts.fallback or nil
   local result = M.indent_info(opts.scan)
 
-  M.set_indent({
+  local gen_settings = {
+    spaces = result.spaces,
+    smartindent = true,
+    expandtab = result.expandtab,
+  }
+
+  M.set_indent {
     global = false,
-    options = MergeSettings({
-      spaces = result.spaces,
-      smartindent = true,
-      expandtab = result.expandtab,
-    }, fallback),
-  })
+    options = fallback and MergeSettings(gen_settings, fallback) or gen_settings,
+  }
 end
 
 return M
-
-
