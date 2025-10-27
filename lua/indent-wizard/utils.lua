@@ -5,9 +5,9 @@
 ---
 ---@return Settings
 function MergeSettings(settings, user_settings)
-  for key, value in pairs(settings) do
-    if value == nil then
-      settings[key] = user_settings[key]
+  for key, value in pairs(user_settings) do
+    if settings[key] == nil then
+      settings[key] = value
     end
   end
 
