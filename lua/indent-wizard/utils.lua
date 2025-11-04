@@ -1,3 +1,12 @@
+local keys = {
+  "tabstop",
+  "softtabstop",
+  "shiftwidth",
+  "expandtab",
+  "smartindent",
+  "spaces",
+}
+
 --- Merge user settings with primary settings
 ---
 ---@param settings Settings Primary settings
@@ -7,9 +16,9 @@
 function MergeSettings(settings, user_settings)
   local out_settings = {}
 
-  for key, value in pairs(user_settings) do
+  for _, key in ipairs(keys) do
     if settings[key] == nil then
-      out_settings[key] = value
+      out_settings[key] = user_settings[key]
     else
       out_settings[key] = settings[key]
     end
