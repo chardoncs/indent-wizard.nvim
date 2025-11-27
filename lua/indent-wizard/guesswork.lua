@@ -1,8 +1,7 @@
----@alias IndentResult {
----  spaces:uinteger|nil,
----  expandtab:boolean|nil,
----  mixed:boolean,
----}
+---@class IndentResult
+---@field spaces uinteger?
+---@field expandtab boolean?
+---@field mixed boolean?
 
 --- Check indentation in current buffer
 ---

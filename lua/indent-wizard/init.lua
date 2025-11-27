@@ -5,16 +5,17 @@ require("indent-wizard.utils")
 
 local default_line_count = 25
 
----@alias ScanSettings {line_count:uinteger|nil, offset:number|string|nil}
+---@class ScanSettings
+---@field line_count uinteger?
+---@field offset (number|string)?
 
----@alias Settings {
----  tabstop:uinteger|nil,
----  softtabstop:uinteger|nil,
----  shiftwidth:uinteger|nil,
----  expandtab: boolean|nil,
----  smartindent: boolean|nil,
----  spaces:uinteger|nil, --- Shorthand for setting `shiftwidth`, `tabstop`, and `softtabstop` at the same time as fallback
----}
+---@class Settings
+---@field tabstop uinteger?
+---@field softtabstop uinteger?
+---@field shiftwidth uinteger?
+---@field expandtab boolean?
+---@field smartindent boolean?
+---@field spaces uinteger? Shorthand for setting `shiftwidth`, `tabstop`, and `softtabstop` at the same time as fallback
 
 ---@module "indent-wizard"
 local M = {
@@ -27,13 +28,13 @@ local M = {
 --- Setup function
 ---
 ---@param opts {
----  auto_guess:boolean|nil,
+---  auto_guess:boolean?,
 ---  defaults:{
----    ft:string|string[]|nil,
+---    ft:(string|string[])?,
 ---    options:Settings,
----  }[]|nil,
----  scan:ScanSettings|nil,
----}|nil Configuration opts
+---  }[]?,
+---  scan:ScanSettings?,
+---}? Configuration opts
 function M.setup(opts)
   local function indent_info()
     local result = M.indent_info(opts and opts.scan)
