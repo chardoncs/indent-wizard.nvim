@@ -63,8 +63,8 @@ require("indent-wizard").setup {
       -- All options are optional
       options = {
         tabstop = 8,
-        softtabstop = 4,
-        shiftwidth = 4,
+        -- `spaces` is a shorthand for setting all indentation options related to spaces
+        spaces = 4,
         expandtab = true,
         smartindent = true,
       },
@@ -73,7 +73,7 @@ require("indent-wizard").setup {
     {
       ft = "go",
       options = {
-        shiftwidth = 4,
+        spaces = 4,
         expandtab = false,
       },
     },
@@ -81,7 +81,7 @@ require("indent-wizard").setup {
       -- Or multiple filetypes
       ft = {"c", "cpp", "rust", "zig"},
       options = {
-        shiftwidth = 4,
+        spaces = 4,
         expandtab = false,
       },
     },
@@ -92,10 +92,4 @@ require("indent-wizard").setup {
 ### Commands
 
 - `IndentInfo`: Guess the indentation and print the summary
-  - Output: `Apparently: shiftwidth=<sw>, expandtab=<et>`
-    - `<sw>`: Number for shiftwidth, or `?` for inconclusive
-    - `<et>`: If expands tab, `yes`, `no`, or `?` (inconclusive)
 - `GuessIndent`: Guess the indentation and update the configuration
-  - Output: `Apparently: shiftwidth=<sw>, expandtab=<et>`
-    - `<sw>`: Number for shiftwidth, or `?` for inconclusive
-    - `<et>`: If expands tab, `yes`, `no`, or `?` (inconclusive)
